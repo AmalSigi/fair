@@ -355,7 +355,7 @@ export class CreateCommericalInvoiceComponent implements OnInit {
 
           return {
             ...item,
-            quantity: remainingQty, 
+            quantity: remainingQty,
             availqty: remainingQty,
             lineNumber: item.lineNumber,
             hsc: item.hsc,
@@ -379,13 +379,19 @@ export class CreateCommericalInvoiceComponent implements OnInit {
   }
   public imageUrl = 'assets/images/companyLogo.png';
   get hasInvalidSelectedItems(): boolean {
-    return this.selection.selected.some((item: any) => 
-      item.quantity > item.availqty || item.quantity <= 0 || item.quantity === null
+    return this.selection.selected.some(
+      (item: any) =>
+        item.quantity > item.availqty ||
+        item.quantity <= 0 ||
+        item.quantity === null,
     );
   }
   get hasInvalidItemsInInvoice(): boolean {
-    return this.sortedData2.data.some((item: any) => 
-      item.quantity > item.maxQuantity || item.quantity <= 0 || item.quantity === null
+    return this.sortedData2.data.some(
+      (item: any) =>
+        item.quantity > item.maxQuantity ||
+        item.quantity <= 0 ||
+        item.quantity === null,
     );
   }
   addItem() {

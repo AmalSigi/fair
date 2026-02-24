@@ -319,6 +319,8 @@ export class CreatePoComponent implements OnInit {
               active: 1,
               shippingCharges: 0,
               discount: 0,
+              totalAmount: 0,
+              totalCost: 0,
             });
             this.toaster.success('Purchase Order Created Successfully');
           },

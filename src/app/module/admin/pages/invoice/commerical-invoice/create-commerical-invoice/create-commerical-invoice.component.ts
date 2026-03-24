@@ -364,7 +364,6 @@ export class CreateCommericalInvoiceComponent implements OnInit {
             weightDim: item.weightDim,
             selectedQuantity: 0,
             totalPrice: 0,
-            poNumber: poNumber,
           };
         });
         this.sortedData1.data = itemsWithSelectedQty;

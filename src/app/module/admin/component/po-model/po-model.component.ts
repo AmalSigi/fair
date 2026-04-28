@@ -3,43 +3,92 @@ import { FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { PoService } from '../../../../_core/http/api/po.service';
-import { MatButton } from "@angular/material/button";
+import { MatButton } from '@angular/material/button';
 import { ToastrService } from 'ngx-toastr';
+import {
+  ProgressBarMode,
+  MatProgressBarModule,
+} from '@angular/material/progress-bar';
+import { MatRadioModule } from '@angular/material/radio';
+import { prototype } from 'events';
+import e from 'express';
 
 @Component({
   selector: 'app-po-model',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButton, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatProgressBarModule,
+    MatRadioModule,
+  ],
   templateUrl: './po-model.component.html',
 })
 export class PoModelComponent {
   public showModel = false;
   public newTagName = '';
 
-  @Output() onClick = new EventEmitter();
+  @Output() onClick = new EventEmitter<boolean>();
   @Input() public po: any;
 
-  constructor(private readonly poService: PoService,private readonly toaster:ToastrService) {}
- public addItemModel:boolean=false;
+  constructor(
+    private readonly poService: PoService,
+    private readonly toaster: ToastrService,
+  ) {}
+  public addItemModel: boolean = false;
   public productItems: any;
   public subTotal: any;
   public total: any;
   public loading = false;
-public createPOItemloading=false;
+  public createPOItemloading = false;
   public editingIndex: number | null = null;
-public addPOItemForm:FormGroup=new FormGroup({
-  description:new FormControl('',Validators.required),
-  quantity:new FormControl('',Validators.required),
-  unitPrice:new FormControl('',Validators.required),
-  traceabilityRequirement:new FormControl(''),
-  totalPrice:new FormControl(''),
-  unit:new FormControl('',Validators.required),
-  poId:new FormControl(''),
-  ManufacturerModel:new FormControl('',Validators.required),
-  PartNumber:new FormControl('',Validators.required),
-  ActualCostPerUnit:new FormControl(null,Validators.required),
+  public addPOItemForm: FormGroup = new FormGroup({
+    poId: new FormControl(''),
+    poNumber: new FormControl('po'),
+    lineNumber: new FormControl(0),
+    quantity: new FormControl('', Validators.required),
+    unit: new FormControl('', Validators.required),
+    description: new FormControl('', Validators.required),
+    manufacturerModel: new FormControl('', Validators.required),
+    partNumber: new FormControl('', Validators.required),
+    traceabilityRequired: new FormControl(''),
+    unitPrice: new FormControl('', Validators.required),
+    totalPrice: new FormControl(''),
+    actualCostPerUnit: new FormControl(null, Validators.required),
+    terms: new FormControl(''),
+    countryOfOrigin: new FormControl(''),
+    hsc: new FormControl(''),
+    weightDim: new FormControl(''),
+    discount: new FormControl(0),
+  });
 
-})
+  public statusForm: FormGroup = new FormGroup({
+    statusId: new FormControl('', Validators.required),
+  });
+
+  public poForm: FormGroup = new FormGroup({
+    poId: new FormControl(null, Validators.required),
+    poNumber: new FormControl('', Validators.required),
+    poTypeId: new FormControl('', Validators.required),
+  });
+  public updatePoModel: boolean = false;
+  public isUpdatingPo: boolean = false;
+  poStatusesIncoming = [
+    { id: 1, name: 'Created' },
+    { id: 2, name: 'Pro-Forma' },
+    { id: 4, name: 'Ready For Outgoing PO' },
+  ];
+
+  poStatusesOutgoing = [
+    { id: 6, name: 'Created' },
+    { id: 7, name: 'Sent To Supplier' },
+    { id: 8, name: 'Supplier Confirmed' },
+    { id: 9, name: 'Received' },
+    { id: 11, name: 'Closed' },
+  ];
+  statuses: any[] = [];
+
   editItem(index: number) {
     this.editingIndex = index;
   }
@@ -50,30 +99,34 @@ public addPOItemForm:FormGroup=new FormGroup({
 
   // Save PO details
   savePoDetails(po: any) {
-     this.poService.updatePOItem(po).subscribe({
-       next: () => {
-        this.toaster.success('PO details updated successfully','Success');
+    this.poService.updatePOItem(po).subscribe({
+      next: () => {
+        this.toaster.success('PO details updated successfully', 'Success');
         this.getPO();
-         // Optionally show a success message
-       },
-       error: () => {
-        this.toaster.error('Failed to update PO details','Error');
-         // Optionally show an error message
-       }
-     });
+        // Optionally show a success message
+      },
+      error: () => {
+        this.toaster.error('Failed to update PO details', 'Error');
+        // Optionally show an error message
+      },
+    });
   }
 
   // Save a line item
+  isediting: boolean = false;
   saveItem(item: any) {
+    this.isediting = true;
     this.poService.updatePOItem(item).subscribe({
       next: () => {
-         this.toaster.success('PO details updated successfully','Success');
+        this.isediting = false;
+        this.toaster.success('PO details updated successfully', 'Success');
         this.getPO();
       },
-     error: () => {
-        this.toaster.error('Failed to update PO details','Error');
-         // Optionally show an error message
-       }
+      error: () => {
+        this.isediting = false;
+        this.toaster.error('Failed to update PO details', 'Error');
+        // Optionally show an error message
+      },
     });
   }
 
@@ -86,28 +139,51 @@ public addPOItemForm:FormGroup=new FormGroup({
     //   },
     //   error: () => {
     //     // Optionally show an error message
-    //   }
+    //   },
     // });
   }
+
+  public poTypeId: any;
   ngOnInit() {
     this.getPO();
+    if (this.po.poType === 'Outgoing') {
+      this.statuses = this.poStatusesOutgoing;
+      this.poTypeId = 2;
+    } else if (this.po.poType === 'Incoming') {
+      this.statuses = this.poStatusesIncoming;
+      this.poTypeId = 1;
+    } else {
+      this.statuses = this.poStatusesIncoming;
+      this.poTypeId = 3;
+    }
+    this.poForm.patchValue({
+      poId: this.po.id,
+      poNumber: this.po.poNumber,
+      poTypeId: this.poTypeId,
+    });
   }
 
+  newVlaue: number = 0;
+  public discount: number = 0;
   public getPO() {
     this.loading = true;
     this.poService.getPO(this.po.id).subscribe({
       next: (response) => {
         this.loading = false;
         this.productItems = response;
+        this.discount = this.productItems.reduce(
+          (acc: number, item: any) => acc + item.discount,
+          0,
+        );
         this.subTotal = this.productItems.reduce(
           (acc: number, item: any) => acc + item.totalPrice,
-          0
+          0,
         );
-        this.total = this.subTotal;
-        console.log(this.productItems);
+        this.newVlaue = this.subTotal - this.discount;
+        this.newVlaue = this.newVlaue + this.po.shippingCharges;
+        this.total = this.newVlaue;
       },
       error: (error) => {
-        console.log(error);
         if (error.status === 404) {
           this.productItems = [];
         }
@@ -117,27 +193,82 @@ public addPOItemForm:FormGroup=new FormGroup({
   }
 
   public closeModel() {
-    this.onClick.emit();
+    this.onClick.emit(false);
   }
 
+  public isAdding: boolean = false;
+
   onSubmit() {
-    this.createPOItemloading=true;
+    this.isAdding = true;
+    this.createPOItemloading = true;
+
     this.addPOItemForm.patchValue({
-      poId:this.po.id,
-      totalPrice:this.addPOItemForm.value.quantity * this.addPOItemForm.value.unitPrice
+      poId: this.po.id,
+      lineNumber: this.productItems?.length + 1,
+      poNumber: this.po.poNumber,
+      totalPrice:
+        this.addPOItemForm.value.quantity * this.addPOItemForm.value.unitPrice,
     });
     this.poService.createPOItem(this.addPOItemForm.value).subscribe({
       next: (response) => {
-        this.toaster.success('PO Item added successfully','Success');
+        this.isAdding = false;
+        this.toaster.success('PO Item added successfully', 'Success');
         this.getPO();
-        this.addItemModel=false;
+        this.addItemModel = false;
         this.addPOItemForm.reset();
       },
       error: (error) => {
-        this.toaster.error('Failed to add PO Item','Error');
-        this.createPOItemloading=false;
-      },complete:()=>{ this.createPOItemloading=false;  }
+        this.isAdding = false;
+        this.toaster.error('Failed to add PO Item', 'Error');
+        this.createPOItemloading = false;
+      },
+      complete: () => {
+        this.createPOItemloading = false;
+      },
     });
-    
+  }
+
+  public updateStatusModel: boolean = false;
+  public isUpdating: boolean = false;
+  closeStatusModel() {
+    this.updateStatusModel = !this.updateStatusModel;
+    this.onClick.emit(true);
+  }
+  updateStatus() {
+    this.isUpdating = true;
+    const statusId = this.statusForm.get('statusId')?.value;
+    this.poService.updatePoStatus(statusId, this.po.id).subscribe({
+      next: () => {
+        this.isUpdating = false;
+        this.toaster.success('PO Status updated successfully', 'Success');
+        this.onClick.emit(true);
+      },
+      error: () => {
+        this.toaster.error('Failed to update PO Status', 'Error');
+      },
+    });
+  }
+
+  closeItemModel() {
+    this.addItemModel = !this.addItemModel;
+    this.addPOItemForm.reset();
+  }
+
+  closeUpdatePoModel() {
+    this.updatePoModel = !this.updatePoModel;
+    this.onClick.emit(true);
+  }
+  updatePo() {
+    this.isUpdatingPo = true;
+    this.poService.updatePo(this.po.id, this.poForm.value).subscribe({
+      next: () => {
+        this.isUpdatingPo = false;
+        this.toaster.success('PO updated successfully', 'Success');
+        this.onClick.emit(true);
+      },
+      error: () => {
+        this.toaster.error('Failed to update PO Status', 'Error');
+      },
+    });
   }
 }

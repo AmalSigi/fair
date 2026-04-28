@@ -1,25 +1,203 @@
-/* You can add global styles to this file, and also import other style files */
-/* You can add global styles to this file, and also import other style files */
+// ===============================
+// Angular Material Theming
+// ===============================
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+$fairMount-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+:root {
+  @include mat.all-component-themes($fairMount-theme);
+}
+
+// ===============================
+// Tailwind
+// ===============================
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+// ===============================
+// Base Styles
+// ===============================
 html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+// ===============================
+// Scrollbar Helpers
+// ===============================
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+// ===============================
+// Loading Dots Animation
+// ===============================
+@keyframes dot-flashing {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.loading-dots {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.dot {
+  opacity: 0;
+  animation: dot-flashing 1.4s infinite linear;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+// ===============================
+// ✅ FULL PRINT STYLES
+// ===============================
+@media print {
+  @page {
+    size: A4;
+    margin: 2mm; // Balanced margin for headers/footers
+  }
+
+  // 1. Reset Global Height Restrictions
+  // "Height: 100%" is the #1 reason pages cut off in print
+  html,
+  body {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+    background: white !important;
+  }
+
+  // 2. Neutralize Modal Fixed Positioning
+  // This turns the modal into a standard block that flows across pages
+  section.fixed,
+  div.fixed,
+  .backdrop-blur-sm {
+    position: static !important;
+    display: block !important;
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+    background: white !important;
+    backdrop-filter: none !important; // Removes the blur effect
+    padding: 0 !important;
+  }
+
+  // 3. Force Content Wrapper to Expand
+  // Kills the h-[95vh] and calc height limits
+  .bg-white.rounded-xl,
+  .print-area,
+  [class*="h-[95vh]"],
+  [class*="h-[calc"] {
+    position: static !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  // 4. Force Material Tabs to Expand (CRITICAL)
+  // Material tabs use hidden overflows by default which clip content
+  mat-tab-group,
+  .mat-mdc-tab-body-wrapper,
+  .mat-mdc-tab-body,
+  .mat-mdc-tab-body-content {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+  }
+
+  // 5. Hide UI Elements
+  .print-hidden,
+  .mat-mdc-tab-header, // Hides the clickable tab buttons
+  button,
+  .bg-gray-50.border-b {
+    display: none !important;
+  }
+
+  // 6. Table Layout Optimization
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+
+  td,
+  th {
+    word-wrap: break-word !important;
+  }
+
+  // 7. Cleanup
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  form,
+  .sli-container {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  // Utility to prevent specific blocks (like signatures) from splitting
+  .keep-together {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
 }

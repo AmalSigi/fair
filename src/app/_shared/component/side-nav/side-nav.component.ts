@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavigationService } from '../../../_core/services/navigation/navigation.service';
 
 @Component({
   selector: 'app-side-nav',
@@ -9,7 +10,10 @@ import { Router } from '@angular/router';
   templateUrl: './side-nav.component.html',
 })
 export class SideNavComponent {
-  constructor(private readonly route: Router) {}
+  constructor(
+    private readonly route: Router,
+    private readonly navigationService: NavigationService,
+  ) {}
   @Output() onClick = new EventEmitter();
   public closeNavbar() {
     this.onClick.emit();
@@ -22,10 +26,22 @@ export class SideNavComponent {
     this.onClick.emit();
   }
 
-  public logOut() {
-    localStorage.clear();
-    this.route.navigate(['/login']);
+  public showProFormaMenu: boolean = false;
+  public showCommercialInvoiceMenu: boolean = false;
+
+  public toggleProFormaMenu(): void {
+    this.showProFormaMenu = !this.showProFormaMenu;
   }
 
-  public showDealSubmenu = false;
+  public toggleCommercialInvoiceMenu(): void {
+    this.showCommercialInvoiceMenu = !this.showCommercialInvoiceMenu;
+  }
+
+  // public toggleSideNavigation(): void {
+  //   this.navigationService.toggleSideNavigation();
+  // }
+  public logOut() {
+    localStorage.clear();
+    this.route.navigate(['/']);
+  }
 }

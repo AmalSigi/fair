@@ -176,6 +176,12 @@
               scope="col"
               class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
+              Countery
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
               Destination
             </th>
             <th
@@ -209,6 +215,11 @@
 
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
               {{ po.purchaseOrder.orderDate | date: "mediumDate" }}
+            </td>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium"
+            >
+              {{ po.purchaseOrder.country }}
             </td>
             <td
               class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium"

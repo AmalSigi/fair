@@ -26,6 +26,7 @@ export class ImportPosComponent {
     'ManufacturerModel',
     'PartNumber',
     'UnitPrice',
+    'Country',
     'CustomerName',
     'ActualCostPerUnit',
     'Discount',
@@ -116,6 +117,7 @@ export class ImportPosComponent {
                 totalAmount: this.toNumber(row['TotalAmount']),
                 totalCost: this.toNumber(row['TotalCost']),
                 description: this.toText(row['Description']),
+                country: this.toText(row['Country']),
                 items: [],
               };
             }

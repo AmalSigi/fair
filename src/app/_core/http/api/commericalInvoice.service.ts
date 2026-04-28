@@ -33,8 +33,15 @@ export class CommercialInvoiceService {
   }
 
   public deleteInvoice(id: any, poId: any): Observable<any> {
-    return this.http.delete<any>(
+    return this.http.post<any>(
       `${environment.api}/CommercialInvoice?id=${id}&poId=${poId}`,
+      {},
+    );
+  }
+
+  public getInvoiceTax(startDate: any, endDate: any): Observable<any> {
+    return this.http.get<any>(
+      `${environment.api}/CommercialInvoice/invoiceTax?startDate=${startDate}&endDate=${endDate}`,
     );
   }
 }

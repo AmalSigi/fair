@@ -1,8 +1,6 @@
 <section class="p-6 bg-gray-50 min-h-screen print:hidden">
   <div class="mb-6">
-    <p class="text-2xl font-semibold text-gray-800">
-      Commercial Invoice Report
-    </p>
+    <p class="text-2xl font-semibold text-gray-800">Invoice Tax Report</p>
   </div>
 
   <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
@@ -36,6 +34,13 @@
       >
         Get Report
       </button>
+      <button
+        type="button"
+        (click)="downloadReport()"
+        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors ml-auto"
+      >
+        Download Report
+      </button>
     </form>
   </div>
 
@@ -67,60 +72,111 @@
           >
             {{ element.commercialInvoiceNumber }}
           </td>
-        </ng-container>
-        <ng-container matColumnDef="customerId">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            mat-sort-header="customerId"
-            class="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50"
+          <td
+            mat-footer-cell
+            *matFooterCellDef
+            class="px-4 py-3 font-semibold bg-gray-100"
           >
-            Customer
-          </th>
-          <td mat-cell *matCellDef="let element" class="px-4 py-3">
-            {{ orgList ? getCustomerName(element.customerId) : "" }}
+            Total
           </td>
         </ng-container>
-        <ng-container matColumnDef="finalDestination">
+        <ng-container matColumnDef="createdAt">
           <th
             mat-header-cell
             *matHeaderCellDef
-            mat-sort-header="finalDestination"
+            mat-sort-header="createdAt"
             class="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50"
           >
-            Final Destination
+            Date
           </th>
           <td mat-cell *matCellDef="let element" class="px-4 py-3">
-            <ng-container>
-              {{ element.finalDestination }}
-            </ng-container>
+            {{ element.createdAt | date: "dd/MM/yyyy" }}
+          </td>
+          <td mat-footer-cell *matFooterCellDef class="px-4 py-3 bg-gray-100">
+            <!-- Leave empty for totals -->
           </td>
         </ng-container>
-        <ng-container matColumnDef="totalAmount">
+        <ng-container matColumnDef="pc">
           <th
             mat-header-cell
             *matHeaderCellDef
-            mat-sort-header="totalAmount"
+            mat-sort-header="pc"
             class="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50"
           >
-            Total Amount
+            PC
           </th>
           <td mat-cell *matCellDef="let element" class="px-4 py-3">
             <ng-container>
-              {{ element.totalAmount | currency: "USD" : "symbol" : "1.2-2" }}
+              {{
+                element.totalAmount + element.shippingCharge + element.taxAmount
+                  | currency: "USD"
+              }}
             </ng-container>
-
-            <ng-template #documentTitle>Not Set</ng-template>
+          </td>
+          <td
+            mat-footer-cell
+            *matFooterCellDef
+            class="px-4 py-3 font-semibold bg-gray-100"
+          >
+            {{ totalPC | currency: "USD" }}
           </td>
         </ng-container>
-
+        <ng-container matColumnDef="netCost">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="netCost"
+            class="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50"
+          >
+            NC
+          </th>
+          <td mat-cell *matCellDef="let element" class="px-4 py-3">
+            <ng-container>
+              {{ element.netCost | currency: "USD" }}
+            </ng-container>
+          </td>
+          <td
+            mat-footer-cell
+            *matFooterCellDef
+            class="px-4 py-3 font-semibold bg-gray-100"
+          >
+            {{ totalNC | currency: "USD" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="gp">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="gp"
+            class="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50"
+          >
+            GP
+          </th>
+          <td mat-cell *matCellDef="let element" class="px-4 py-3">
+            <ng-container>
+              {{
+                element.totalAmount +
+                  element.shippingCharge +
+                  element.taxAmount -
+                  element.netCost | currency: "USD"
+              }}
+            </ng-container>
+          </td>
+          <td
+            mat-footer-cell
+            *matFooterCellDef
+            class="px-4 py-3 font-semibold bg-gray-100"
+          >
+            {{ totalGP | currency: "USD" }}
+          </td>
+        </ng-container>
         <tr mat-header-row *matHeaderRowDef="matHeaders"></tr>
         <tr
           mat-row
           *matRowDef="let row; columns: matHeaders"
           class="bg-white border-b hover:bg-gray-50 cursor-pointer"
-          (click)="openViewCIModel(row)"
         ></tr>
+        <tr mat-footer-row *matFooterRowDef="matHeaders"></tr>
       </table>
     </div>
 
@@ -160,9 +216,3 @@
     [pageSizeOptions]="[10, 20, 50, 100]"
   ></mat-paginator>
 </section>
-<app-view-commerical-invoice
-  *ngIf="showModel"
-  [ciNumber]="ciNumber"
-  (onClick)="closeModel($event)"
->
-</app-view-commerical-invoice>

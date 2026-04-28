@@ -58,86 +58,173 @@
                   Update Status
                 </button>
               </div>
+              <div *ngIf="this.po.poType === 'Dummy'">
+                <button
+                  (click)="updatePoModel = !updatePoModel"
+                  class="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Update Po Name
+                </button>
+              </div>
             </div>
-            <form [formGroup]="addPOItemForm">
-              <div *ngIf="addItemModel">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Item</h3>
+            <form [formGroup]="addPOItemForm" *ngIf="addItemModel">
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  Add New Item
+                </h3>
                 <div class="grid grid-cols-4 gap-4 mb-4">
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Quantity</label
+                    >
                     <input
                       formControlName="quantity"
                       type="number"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter quantity"
                     />
-                    <div *ngIf="addPOItemForm.get('quantity')?.invalid && (addPOItemForm.get('quantity')?.dirty || addPOItemForm.get('quantity')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('quantity')?.invalid &&
+                        (addPOItemForm.get('quantity')?.dirty ||
+                          addPOItemForm.get('quantity')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Quantity is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Unit</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Unit</label
+                    >
                     <input
                       formControlName="unit"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter unit"
                     />
-                    <div *ngIf="addPOItemForm.get('unit')?.invalid && (addPOItemForm.get('unit')?.dirty || addPOItemForm.get('unit')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('unit')?.invalid &&
+                        (addPOItemForm.get('unit')?.dirty ||
+                          addPOItemForm.get('unit')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Unit is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Description</label
+                    >
                     <input
                       formControlName="description"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter description"
                     />
-                    <div *ngIf="addPOItemForm.get('description')?.invalid && (addPOItemForm.get('description')?.dirty || addPOItemForm.get('description')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('description')?.invalid &&
+                        (addPOItemForm.get('description')?.dirty ||
+                          addPOItemForm.get('description')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Description is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Unit Price</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Unit Price</label
+                    >
                     <input
                       formControlName="unitPrice"
                       type="number"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter unit price"
                     />
-                    <div *ngIf="addPOItemForm.get('unitPrice')?.invalid && (addPOItemForm.get('unitPrice')?.dirty || addPOItemForm.get('unitPrice')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('unitPrice')?.invalid &&
+                        (addPOItemForm.get('unitPrice')?.dirty ||
+                          addPOItemForm.get('unitPrice')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Unit Price is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Actual Cost Per Unit</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Actual Cost Per Unit</label
+                    >
                     <input
                       formControlName="actualCostPerUnit"
                       type="number"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter actual cost"
                     />
-                    <div *ngIf="addPOItemForm.get('actualCostPerUnit')?.invalid && (addPOItemForm.get('actualCostPerUnit')?.dirty || addPOItemForm.get('actualCostPerUnit')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('actualCostPerUnit')?.invalid &&
+                        (addPOItemForm.get('actualCostPerUnit')?.dirty ||
+                          addPOItemForm.get('actualCostPerUnit')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Actual Cost is required.
+                    </div>
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Discount</label
+                    >
+                    <input
+                      formControlName="discount"
+                      type="number"
+                      class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="Enter discount"
+                    />
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('discount')?.invalid &&
+                        (addPOItemForm.get('discount')?.dirty ||
+                          addPOItemForm.get('discount')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
+                      Discount is required.
                     </div>
                   </div>
 
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Part #</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Part #</label
+                    >
                     <input
                       formControlName="partNumber"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter part number"
                     />
-                    <div *ngIf="addPOItemForm.get('partNumber')?.invalid && (addPOItemForm.get('partNumber')?.dirty || addPOItemForm.get('partNumber')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('partNumber')?.invalid &&
+                        (addPOItemForm.get('partNumber')?.dirty ||
+                          addPOItemForm.get('partNumber')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Part Number is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Trace</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Trace</label
+                    >
                     <select
                       formControlName="traceabilityRequired"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
@@ -148,67 +235,119 @@
                       <option [value]="1">yes</option>
                       <option [value]="0">no</option>
                     </select>
-                    <div *ngIf="addPOItemForm.get('traceabilityRequired')?.invalid && (addPOItemForm.get('traceabilityRequired')?.dirty || addPOItemForm.get('traceabilityRequired')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('traceabilityRequired')?.invalid &&
+                        (addPOItemForm.get('traceabilityRequired')?.dirty ||
+                          addPOItemForm.get('traceabilityRequired')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Trace is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Manufacturer Model</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Manufacturer Model</label
+                    >
                     <input
                       formControlName="manufacturerModel"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter manufacturer model"
                     />
-                    <div *ngIf="addPOItemForm.get('manufacturerModel')?.invalid && (addPOItemForm.get('manufacturerModel')?.dirty || addPOItemForm.get('manufacturerModel')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('manufacturerModel')?.invalid &&
+                        (addPOItemForm.get('manufacturerModel')?.dirty ||
+                          addPOItemForm.get('manufacturerModel')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Manufacturer Model is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Terms</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Terms</label
+                    >
                     <input
                       formControlName="terms"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter terms"
                     />
-                    <div *ngIf="addPOItemForm.get('terms')?.invalid && (addPOItemForm.get('terms')?.dirty || addPOItemForm.get('terms')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('terms')?.invalid &&
+                        (addPOItemForm.get('terms')?.dirty ||
+                          addPOItemForm.get('terms')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Terms is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Country Of Origin</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Country Of Origin</label
+                    >
                     <input
                       formControlName="countryOfOrigin"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter country of origin"
                     />
-                    <div *ngIf="addPOItemForm.get('countryOfOrigin')?.invalid && (addPOItemForm.get('countryOfOrigin')?.dirty || addPOItemForm.get('countryOfOrigin')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('countryOfOrigin')?.invalid &&
+                        (addPOItemForm.get('countryOfOrigin')?.dirty ||
+                          addPOItemForm.get('countryOfOrigin')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Country Of Origin is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">HSC</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >HSC</label
+                    >
                     <input
                       formControlName="hsc"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter HSC"
                     />
-                    <div *ngIf="addPOItemForm.get('hsc')?.invalid && (addPOItemForm.get('hsc')?.dirty || addPOItemForm.get('hsc')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('hsc')?.invalid &&
+                        (addPOItemForm.get('hsc')?.dirty ||
+                          addPOItemForm.get('hsc')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       HSC is required.
                     </div>
                   </div>
                   <div class="flex flex-col">
-                    <label for="" class="text-sm font-medium text-gray-700 mb-1">Weight & Dim</label>
+                    <label for="" class="text-sm font-medium text-gray-700 mb-1"
+                      >Weight & Dim</label
+                    >
                     <input
                       formControlName="weightDim"
                       type="text"
                       class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       placeholder="Enter weight & dim"
                     />
-                    <div *ngIf="addPOItemForm.get('weightDim')?.invalid && (addPOItemForm.get('weightDim')?.dirty || addPOItemForm.get('weightDim')?.touched)" class="text-red-500 text-xs mt-1">
+                    <div
+                      *ngIf="
+                        addPOItemForm.get('weightDim')?.invalid &&
+                        (addPOItemForm.get('weightDim')?.dirty ||
+                          addPOItemForm.get('weightDim')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
                       Weight & Dim is required.
                     </div>
                   </div>
@@ -239,8 +378,84 @@
                 </div>
               </div>
             </form>
-            <form [formGroup]="statusForm">
-              <div *ngIf="updateStatusModel" class="mb-4">
+            <form [formGroup]="poForm" *ngIf="updatePoModel">
+              <div class="mb-4">
+                <div class="grid grid-cols-4 gap-4 mb-4">
+                  <div class="flex flex-col">
+                    <label
+                      for="customerName"
+                      class="block mb-2 text-sm font-medium text-gray-700"
+                    >
+                      Update PO Name
+                    </label>
+                    <input
+                      formControlName="poNumber"
+                      type="text"
+                      class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="Enter PO Name"
+                    />
+
+                    <div
+                      *ngIf="
+                        poForm.get('poNumber')?.invalid &&
+                        (poForm.get('poNumber')?.dirty ||
+                          poForm.get('poNumber')?.touched)
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
+                      Status is required.
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1"
+                      >Select PO Type</label
+                    >
+                    <select
+                      id="poTypeId"
+                      name="poTypeId"
+                      formControlName="poTypeId"
+                      class="block w-full border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    >
+                      <option [value]="null" disabled selected>
+                        Select PO Type
+                      </option>
+                      <option [value]="1">Incoming PO</option>
+                      <option [value]="2">Outgoing PO</option>
+                      <option [value]="3">Dummy PO</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="w-[20%] flex gap-2 items-end">
+                  <button
+                    (click)="updatePo()"
+                    [disabled]="isUpdatingPo || poForm.invalid"
+                    class="bg-green-500 disabled:bg-green-200 disabled:cursor-not-allowed text-white px-4 py-2 rounded mt-6"
+                  >
+                    <ng-container *ngIf="!isUpdatingPo">
+                      Update PO
+                    </ng-container>
+
+                    <ng-container *ngIf="isUpdatingPo">
+                      <span>Updating </span>
+                      <span class="loading-dots">
+                        <span class="dot">.</span>
+                        <span class="dot">.</span>
+                        <span class="dot">.</span>
+                      </span>
+                    </ng-container>
+                  </button>
+                  <button
+                    (click)="updatePoModel = !updatePoModel"
+                    class="bg-gray-500 text-white px-4 py-2 rounded mt-6"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <form [formGroup]="statusForm" *ngIf="updateStatusModel">
+              <div class="mb-4">
                 <label
                   for="customerName"
                   class="block mb-2 text-sm font-medium text-gray-700"
@@ -258,7 +473,14 @@
                     {{ status.name }}
                   </option>
                 </select>
-                <div *ngIf="statusForm.get('statusId')?.invalid && (statusForm.get('statusId')?.dirty || statusForm.get('statusId')?.touched)" class="text-red-500 text-xs mt-1">
+                <div
+                  *ngIf="
+                    statusForm.get('statusId')?.invalid &&
+                    (statusForm.get('statusId')?.dirty ||
+                      statusForm.get('statusId')?.touched)
+                  "
+                  class="text-red-500 text-xs mt-1"
+                >
                   Status is required.
                 </div>
                 <div class="w-[20%] flex gap-2 items-end">
@@ -289,7 +511,30 @@
                 </div>
               </div>
             </form>
-
+            <div class="overflow-x-auto" *ngIf="!loading">
+              <table class="min-w-full border text-xs mb-4">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="border px-2 py-1">PO NUMBER</th>
+                    <th class="border px-2 py-1">CUSTOMER</th>
+                    <th class="border px-2 py-1">DESTINATION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="border px-2 py-1">
+                      {{ po.poNumber }}
+                    </td>
+                    <td class="border px-2 py-1">
+                      {{ po.buyerOrgName }}
+                    </td>
+                    <td class="border px-2 py-1">
+                      {{ po.destination }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <div class="overflow-x-auto" *ngIf="!loading">
               <table class="min-w-full border text-xs mb-4">
                 <thead class="bg-gray-100">
@@ -297,7 +542,6 @@
                     <th class="border px-2 py-1">ORDER DATE</th>
                     <th class="border px-2 py-1">MODE OF SHIPMENT</th>
                     <th class="border px-2 py-1">DELIVERY SCHEDULE</th>
-                    <th class="border px-2 py-1">TERMS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -309,10 +553,7 @@
                       {{ po.modeOfShipment }}
                     </td>
                     <td class="border px-2 py-1">
-                      {{ po.deliverySchedule }}
-                    </td>
-                    <td class="border px-2 py-1">
-                      {{ po.terms }}
+                      {{ po.deliverySchedule | date: "dd/MM/yyyy" }}
                     </td>
                   </tr>
                 </tbody>
@@ -323,24 +564,33 @@
                 <thead class="bg-gray-100">
                   <tr>
                     <th class="border px-2 py-1">LN#</th>
+                    <th class="border px-2 py-1">PONumber</th>
                     <th class="border px-2 py-1">QTY</th>
                     <th class="border px-2 py-1">UNIT</th>
                     <th class="border px-2 py-1">DESCRIPTION</th>
                     <th class="border px-2 py-1">MFR/MODEL</th>
                     <th class="border px-2 py-1">PART #</th>
                     <th class="border px-2 py-1">TERMS</th>
+                    <th class="border px-2 py-1">SH</th>
+                    <th class="border px-2 py-1">BO</th>
+                    <th class="border px-2 py-1">COC</th>
+                    <th class="border px-2 py-1">HSC</th>
+                    <th class="border px-2 py-1">Weight&Dim</th>
                     <th class="border px-2 py-1">TRACEABILITY REQUIREMENT</th>
                     <th class="border px-2 py-1">UNIT PRICE ($)</th>
                     <th class="border px-2 py-1">ACTUAL COST PER UNIT ($)</th>
+                    <th class="border px-2 py-1">DISCOUNT ($)</th>
                     <th class="border px-2 py-1">TOTAL ($)</th>
-                    <th class="border px-2 py-1">STATUS</th>
                     <th class="border px-3 py-2">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of productItems; let i = index">
                     <td class="border px-2 py-1">
-                      {{ i + 1 }}
+                      {{ item.lineNumber }}
+                    </td>
+                    <td class="border px-2 py-1">
+                      {{ item.poNumber }}
                     </td>
                     <td class="border px-2 py-1">
                       <ng-container *ngIf="editingIndex === i; else readQty">
@@ -401,16 +651,60 @@
                       </ng-container>
                       <ng-template #readTerms>{{ item.terms }}</ng-template>
                     </td>
+
                     <td class="border px-2 py-1">
-                      <ng-container *ngIf="editingIndex === i; else readTrace">
+                      <ng-container *ngIf="editingIndex === i; else readSH">
                         <input
-                          [(ngModel)]="item.traceabilityRequired"
+                          [(ngModel)]="item.sh"
                           class="border rounded px-2 py-1 w-24"
                         />
                       </ng-container>
-                      <ng-template #readTrace>{{
-                        item.traceabilityRequired
+                      <ng-template #readSH>{{ item.sh }}</ng-template>
+                    </td>
+                    <td class="border px-2 py-1">
+                      <ng-container *ngIf="editingIndex === i; else readBO">
+                        <input
+                          [(ngModel)]="item.bo"
+                          class="border rounded px-2 py-1 w-24"
+                        />
+                      </ng-container>
+                      <ng-template #readBO>{{ item.bo }}</ng-template>
+                    </td>
+                    <td class="border px-2 py-1">
+                      <ng-container *ngIf="editingIndex === i; else readCOC">
+                        <input
+                          [(ngModel)]="item.countryOfOrigin"
+                          class="border rounded px-2 py-1 w-24"
+                        />
+                      </ng-container>
+                      <ng-template #readCOC>{{
+                        item.countryOfOrigin
                       }}</ng-template>
+                    </td>
+                    <td class="border px-2 py-1">
+                      <ng-container *ngIf="editingIndex === i; else readHSC">
+                        <input
+                          [(ngModel)]="item.hsc"
+                          class="border rounded px-2 py-1 w-24"
+                        />
+                      </ng-container>
+                      <ng-template #readHSC>{{ item.hsc }}</ng-template>
+                    </td>
+                    <td class="border px-2 py-1">
+                      <ng-container
+                        *ngIf="editingIndex === i; else readWeightDim"
+                      >
+                        <input
+                          [(ngModel)]="item.weightDim"
+                          class="border rounded px-2 py-1 w-24"
+                        />
+                      </ng-container>
+                      <ng-template #readWeightDim>{{
+                        item.weightDim
+                      }}</ng-template>
+                    </td>
+                    <td class="border px-2 py-1">
+                      {{ item.traceabilityRequired == 1 ? "Yes" : "No" }}
                     </td>
                     <td class="border px-2 py-1">
                       <ng-container
@@ -432,7 +726,7 @@
                       >
                         <input
                           type="number"
-                          [(ngModel)]="item.unitPrice"
+                          [(ngModel)]="item.actualCostPerUnit"
                           class="border rounded px-2 py-1 w-20"
                         />
                       </ng-container>
@@ -441,11 +735,19 @@
                       }}</ng-template>
                     </td>
                     <td class="border px-2 py-1">
+                      <ng-container *ngIf="editingIndex === i; else discount">
+                        <input
+                          type="number"
+                          [(ngModel)]="item.discount"
+                          class="border rounded px-2 py-1 w-20"
+                        />
+                      </ng-container>
+                      <ng-template #discount>{{ item.discount }}</ng-template>
+                    </td>
+                    <td class="border px-2 py-1">
                       {{ item.totalPrice }}
                     </td>
-                    <td class="border px-2 py-1 font-semibold">
-                      {{ item.itemStatus?.statusName }}
-                    </td>
+
                     <td class="border px-3 py-2">
                       <div class="flex items-center space-x-2">
                         <ng-container
@@ -455,7 +757,15 @@
                             (click)="saveItem(item); cancelEdit()"
                             class="bg-green-500 text-white px-2 py-1 rounded"
                           >
-                            Save
+                            <ng-container *ngIf="!isediting">Save</ng-container>
+                            <ng-container *ngIf="isediting">
+                              <span>Saving </span>
+                              <span class="loading-dots">
+                                <span class="dot">.</span>
+                                <span class="dot">.</span>
+                                <span class="dot">.</span>
+                              </span>
+                            </ng-container>
                           </button>
                           <button
                             (click)="cancelEdit()"
@@ -471,19 +781,19 @@
                           >
                             Edit
                           </button>
-                          <button
+                          <!-- <button
                             (click)="deleteItem(item)"
                             class="bg-red-500 text-white px-2 py-1 rounded"
                           >
                             Delete
-                          </button>
+                          </button> -->
                         </ng-template>
                       </div>
                     </td>
                   </tr>
                   <tr *ngIf="productItems?.length === 0">
                     <td
-                      colspan="12"
+                      colspan="17"
                       class="border px-2 py-1 text-center text-gray-500"
                     >
                       No items found
@@ -492,7 +802,7 @@
                 </tbody>
                 <tr>
                   <td
-                    colspan="11"
+                    colspan="17"
                     class="border px-2 py-1 text-right font-semibold"
                   >
                     SUB TOTAL
@@ -503,18 +813,18 @@
                 </tr>
                 <tr>
                   <td
-                    colspan="11"
+                    colspan="17"
                     class="border px-2 py-1 text-right font-semibold"
                   >
                     DISCOUNT
                   </td>
                   <td class="border px-2 py-1">
-                    {{ po.discount | currency: "USD" }}
+                    {{ discount | currency: "USD" }}
                   </td>
                 </tr>
                 <tr>
                   <td
-                    colspan="11"
+                    colspan="17"
                     class="border px-2 py-1 text-right font-semibold"
                   >
                     FREIGHT /SHIPPING
@@ -534,7 +844,7 @@
                 </tr> -->
                 <tr>
                   <td
-                    colspan="11"
+                    colspan="17"
                     class="border px-2 py-1 text-right font-semibold"
                   >
                     TOTAL AMOUNT

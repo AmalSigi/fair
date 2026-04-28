@@ -10,6 +10,8 @@ import {
   MatProgressBarModule,
 } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
+import { prototype } from 'events';
+import e from 'express';
 
 @Component({
   selector: 'app-po-model',
@@ -43,6 +45,8 @@ export class PoModelComponent {
   public editingIndex: number | null = null;
   public addPOItemForm: FormGroup = new FormGroup({
     poId: new FormControl(''),
+    poNumber: new FormControl('po'),
+    lineNumber: new FormControl(0),
     quantity: new FormControl('', Validators.required),
     unit: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
@@ -56,12 +60,20 @@ export class PoModelComponent {
     countryOfOrigin: new FormControl(''),
     hsc: new FormControl(''),
     weightDim: new FormControl(''),
+    discount: new FormControl(0),
   });
 
   public statusForm: FormGroup = new FormGroup({
     statusId: new FormControl('', Validators.required),
   });
 
+  public poForm: FormGroup = new FormGroup({
+    poId: new FormControl(null, Validators.required),
+    poNumber: new FormControl('', Validators.required),
+    poTypeId: new FormControl('', Validators.required),
+  });
+  public updatePoModel: boolean = false;
+  public isUpdatingPo: boolean = false;
   poStatusesIncoming = [
     { id: 1, name: 'Created' },
     { id: 2, name: 'Pro-Forma' },
@@ -101,13 +113,17 @@ export class PoModelComponent {
   }
 
   // Save a line item
+  isediting: boolean = false;
   saveItem(item: any) {
+    this.isediting = true;
     this.poService.updatePOItem(item).subscribe({
       next: () => {
+        this.isediting = false;
         this.toaster.success('PO details updated successfully', 'Success');
         this.getPO();
       },
       error: () => {
+        this.isediting = false;
         this.toaster.error('Failed to update PO details', 'Error');
         // Optionally show an error message
       },
@@ -123,31 +139,47 @@ export class PoModelComponent {
     //   },
     //   error: () => {
     //     // Optionally show an error message
-    //   }
+    //   },
     // });
   }
 
+  public poTypeId: any;
   ngOnInit() {
     this.getPO();
     if (this.po.poType === 'Outgoing') {
       this.statuses = this.poStatusesOutgoing;
+      this.poTypeId = 2;
+    } else if (this.po.poType === 'Incoming') {
+      this.statuses = this.poStatusesIncoming;
+      this.poTypeId = 1;
     } else {
       this.statuses = this.poStatusesIncoming;
+      this.poTypeId = 3;
     }
+    this.poForm.patchValue({
+      poId: this.po.id,
+      poNumber: this.po.poNumber,
+      poTypeId: this.poTypeId,
+    });
   }
 
   newVlaue: number = 0;
+  public discount: number = 0;
   public getPO() {
     this.loading = true;
     this.poService.getPO(this.po.id).subscribe({
       next: (response) => {
         this.loading = false;
         this.productItems = response;
+        this.discount = this.productItems.reduce(
+          (acc: number, item: any) => acc + item.discount,
+          0,
+        );
         this.subTotal = this.productItems.reduce(
           (acc: number, item: any) => acc + item.totalPrice,
           0,
         );
-        this.newVlaue = this.subTotal - this.po.discount;
+        this.newVlaue = this.subTotal - this.discount;
         this.newVlaue = this.newVlaue + this.po.shippingCharges;
         this.total = this.newVlaue;
       },
@@ -169,8 +201,11 @@ export class PoModelComponent {
   onSubmit() {
     this.isAdding = true;
     this.createPOItemloading = true;
+
     this.addPOItemForm.patchValue({
       poId: this.po.id,
+      lineNumber: this.productItems?.length + 1,
+      poNumber: this.po.poNumber,
       totalPrice:
         this.addPOItemForm.value.quantity * this.addPOItemForm.value.unitPrice,
     });
@@ -206,7 +241,7 @@ export class PoModelComponent {
       next: () => {
         this.isUpdating = false;
         this.toaster.success('PO Status updated successfully', 'Success');
-        this.onClick.emit(false);
+        this.onClick.emit(true);
       },
       error: () => {
         this.toaster.error('Failed to update PO Status', 'Error');
@@ -217,5 +252,23 @@ export class PoModelComponent {
   closeItemModel() {
     this.addItemModel = !this.addItemModel;
     this.addPOItemForm.reset();
+  }
+
+  closeUpdatePoModel() {
+    this.updatePoModel = !this.updatePoModel;
+    this.onClick.emit(true);
+  }
+  updatePo() {
+    this.isUpdatingPo = true;
+    this.poService.updatePo(this.po.id, this.poForm.value).subscribe({
+      next: () => {
+        this.isUpdatingPo = false;
+        this.toaster.success('PO updated successfully', 'Success');
+        this.onClick.emit(true);
+      },
+      error: () => {
+        this.toaster.error('Failed to update PO Status', 'Error');
+      },
+    });
   }
 }

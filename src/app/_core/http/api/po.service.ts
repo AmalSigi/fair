@@ -42,7 +42,7 @@ export class PoService {
     );
   }
   public updatePOItem(po: any) {
-    return this.http.put<any>(
+    return this.http.post<any>(
       `${environment.api}/OrderManagement/UpdatePOItem`,
       po,
     );
@@ -69,6 +69,13 @@ export class PoService {
     return this.http.post<any>(
       `${environment.api}/OrderManagement/UpdatePoStatus?statusId=${statusId}&poId=${poId}`,
       {},
+    );
+  }
+
+  public updatePo(poId: any, po: any): Observable<any> {
+    return this.http.post<any>(
+      `${environment.api}/OrderManagement/UpdatePo?poId=${poId}`,
+      po,
     );
   }
 }

@@ -29,6 +29,7 @@ export interface PoItem {
   actualCostPerUnit: number;
   terms?: string;
   lineNumber?: number;
+  poNumber?: string;
   selectedQuantity?: number; // << NEW: Quantity the user wants to select
 }
 
@@ -58,33 +59,33 @@ export class CreatePoComponent implements OnInit {
   public sortedData1 = new MatTableDataSource<PoItem>();
   public sortedData2 = new MatTableDataSource<PoItem>();
 
-  // 2. Added 'selectedQuantity' to the first table's displayed columns
   displayedColumnsFirst: string[] = [
     'select',
-    'selectedQuantity', // << NEW COLUMN: 'Select Qty'
-    'lineNumber', // Ensure it is displayed
-    'quantity', // Now shows 'Available Qty'
+    'selectedQuantity',
+    'lineNumber',
+    'quantity',
     'itemId',
     'poId',
     'manufacturerModel',
     'partNumber',
     'actualCostPerUnit',
     'unitPrice',
+    'discount',
     'totalPrice',
     'description',
     'unit',
   ];
 
-  // For the second table (Selected items for new PO)
   displayedColumnsSecond: string[] = [
-    'lineNumber', // Ensure it is displayed
+    'lineNumber',
     'itemId',
     'poId',
     'manufacturerModel',
     'partNumber',
-    'quantity', // Now shows the SELECTED quantity
+    'quantity',
     'actualCostPerUnit',
     'unitPrice',
+    'discount',
     'totalPrice',
     'description',
     'unit',
@@ -103,21 +104,22 @@ export class CreatePoComponent implements OnInit {
 
   public poForm: FormGroup = new FormGroup({
     poNumber: new FormControl('', Validators.required),
+    poTypeId: new FormControl(1),
     customerId: new FormControl(null, Validators.required),
-    buyerOrgId: new FormControl(null, Validators.required),
-    supplier: new FormControl('', Validators.required),
-    destination: new FormControl('', Validators.required),
-    paymentTerms: new FormControl('', Validators.required),
-    deliveryTerms: new FormControl('', Validators.required),
-    shippingCharges: new FormControl(0, [
-      Validators.required,
+    buyerOrgId: new FormControl(null),
+    supplier: new FormControl(''),
+    destination: new FormControl(''),
+    paymentTerms: new FormControl(''),
+    deliveryTerms: new FormControl(''),
+    shippingCharges: new FormControl(
+      0,
+
       Validators.min(0),
-    ]),
-    discount: new FormControl(0, [Validators.min(0)]),
+    ),
     orderDate: new FormControl(this.formatDate(this.date), Validators.required),
-    modeOfShipment: new FormControl('', Validators.required),
-    totalAmount: new FormControl(null, Validators.required),
-    totalCost: new FormControl(null, Validators.required),
+    modeOfShipment: new FormControl(''),
+    totalAmount: new FormControl(0),
+    totalCost: new FormControl(0),
     createdBy: new FormControl('1', Validators.required),
     active: new FormControl(1, Validators.required),
   });
@@ -128,15 +130,15 @@ export class CreatePoComponent implements OnInit {
 
   public newPoItem: FormGroup = new FormGroup({
     poId: new FormControl(null),
-    quantity: new FormControl(null, Validators.required),
-    unit: new FormControl('', Validators.required),
-    description: new FormControl('', Validators.required),
-    manufacturerModel: new FormControl('', Validators.required),
-    partNumber: new FormControl('', Validators.required),
+    quantity: new FormControl(null),
+    unit: new FormControl(''),
+    description: new FormControl(''),
+    manufacturerModel: new FormControl(''),
+    partNumber: new FormControl(''),
     traceabilityRequired: new FormControl(0),
-    unitPrice: new FormControl(null, Validators.required),
+    unitPrice: new FormControl(null),
     totalPrice: new FormControl(null),
-    actualCostPerUnit: new FormControl(null, Validators.required),
+    actualCostPerUnit: new FormControl(null),
     terms: new FormControl(''),
     countryOfOrigin: new FormControl(''),
     hsc: new FormControl(''),
@@ -153,6 +155,13 @@ export class CreatePoComponent implements OnInit {
   public newPoId: any;
   public poTypeId: any;
 
+  get hasInvalidSelectedItems(): boolean {
+    return this.selection.selected.some((item) => {
+      const qty = item.selectedQuantity || 0;
+      return qty > item.quantity || qty <= 0;
+    });
+  }
+
   ngOnInit() {
     this.getActivePO();
     this.getCustomer();
@@ -162,7 +171,11 @@ export class CreatePoComponent implements OnInit {
     this.poService.getActivePO().subscribe({
       next: (response: any[]) => {
         this.poList = response.filter(
-          (po: any) => po.poType === 'Incoming' && po.poStatusId === 4,
+          (po: any) =>
+            (po.poType === 'Incoming' || po.poType === 'DummyPO') &&
+            (po.poStatusId === 4 ||
+              po.poStatusId === 12 ||
+              po.poStatusId === 3),
         );
       },
       error: (error: any) => {
@@ -181,15 +194,23 @@ export class CreatePoComponent implements OnInit {
     this.poService.getPO(poId).subscribe({
       next: (response: PoItem[]) => {
         this.loading = false;
+        const filteredResponse = response.filter((item: any) => {
+          const remaining = item.quantity - (item.invoicedQty ?? 0);
+          return remaining > 0;
+        });
+        const itemsWithSelectedQty = filteredResponse.map((item: any) => {
+          const remainingQty = item.quantity - (item.invoicedQty ?? 0);
 
-        const filteredResponse = response.filter((item) => item.quantity > 0);
-
-        const itemsWithSelectedQty = filteredResponse.map((item, index) => ({
-          ...item,
-          lineNumber: item.lineNumber || index + 1,
-          selectedQuantity: 0,
-          totalPrice: 0, // Note: You might want to use the 'totalPrice' from the API data instead of setting it to 0
-        }));
+          return {
+            ...item,
+            quantity: remainingQty, // The new quantity is now the available balance
+            lineNumber: item.lineNumber,
+            hsc: item.hsc,
+            weightDim: item.weightDim,
+            selectedQuantity: 0,
+            totalPrice: 0,
+          };
+        });
 
         this.sortedData1.data = itemsWithSelectedQty;
         this.purchaseOrdersList.data = itemsWithSelectedQty;
@@ -205,35 +226,25 @@ export class CreatePoComponent implements OnInit {
     });
   }
 
-  // 4. New method to handle quantity input change
   public updateSelectionQuantity(row: PoItem, event: any) {
     let newQty = parseInt(event.target.value, 10);
-    const originalQty = row.quantity;
 
     if (isNaN(newQty) || newQty < 0) {
       newQty = 0;
     }
 
-    if (newQty > originalQty) {
-      newQty = originalQty;
-      event.target.value = newQty;
-    }
-
     row.selectedQuantity = newQty;
 
     if (newQty > 0) {
-      // Add to selection if not already selected
       if (!this.selection.isSelected(row)) {
         this.selection.select(row);
       }
     } else {
-      // Remove from selection if quantity is 0
       if (this.selection.isSelected(row)) {
         this.selection.deselect(row);
       }
     }
 
-    // Recalculate totalPrice based on selectedQuantity
     if (row.selectedQuantity && row.unitPrice) {
       row.totalPrice = row.selectedQuantity * row.unitPrice;
     } else {
@@ -267,7 +278,8 @@ export class CreatePoComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.toaster.error('Error creating Purchase Order.');
+          const errorMessage = error.error?.message || 'Something went wrong';
+          this.toaster.error(errorMessage);
         },
       });
     } else {
@@ -287,8 +299,10 @@ export class CreatePoComponent implements OnInit {
         (item: PoItem) => ({
           ...item,
           poId: this.newPoId,
-          itemId: undefined,
-          lineNumber: undefined,
+          poNumber: item.poNumber || this.poForm.get('poNumber')?.value || '',
+          itemId: item.itemId,
+          lineNumber: item.lineNumber,
+          discount: 0,
         }),
       );
 
@@ -305,6 +319,8 @@ export class CreatePoComponent implements OnInit {
               active: 1,
               shippingCharges: 0,
               discount: 0,
+              totalAmount: 0,
+              totalCost: 0,
             });
             this.toaster.success('Purchase Order Created Successfully');
           },
@@ -320,7 +336,6 @@ export class CreatePoComponent implements OnInit {
     }
   }
 
-  // 5. Updated closeModel() to process selected quantity
   public closeModel() {
     this.showAddItem = false;
 
@@ -329,20 +344,32 @@ export class CreatePoComponent implements OnInit {
       .map((item) => ({
         ...item,
         quantity: item.selectedQuantity!,
-        selectedQuantity: undefined,
+        selectedQuantity: undefined, // Clear this as it's not needed in the main table
       }));
 
-    const combinedItems = [...this.sortedData2.data, ...itemsToTransfer];
+    const currentItems = [...this.sortedData2.data];
 
-    this.sortedData2.data = combinedItems;
+    itemsToTransfer.forEach((newItem) => {
+      const exists = currentItems.find(
+        (existing) => existing.itemId === newItem.itemId,
+      );
+
+      if (exists) {
+        exists.quantity += newItem.quantity;
+        exists.totalPrice = exists.quantity * exists.unitPrice;
+      } else {
+        currentItems.push(newItem);
+      }
+    });
+
+    this.sortedData2.data = currentItems;
 
     this.sortedData1.data = [];
     this.purchaseOrdersList.data = [];
     this.poId.reset({ poId: null });
     this.newPoItem.reset({ traceabilityRequired: 0 });
-    this.selection.clear(); // Clear the selection model for the modal
+    this.selection.clear();
   }
-
   public addItem() {
     if (this.newPoItem.valid) {
       const formValue = this.newPoItem.value;
@@ -353,7 +380,7 @@ export class CreatePoComponent implements OnInit {
       const newItem: PoItem = {
         ...formValue,
         poId: 'NEW',
-        lineNumber: newLineNumber, // Assign a temporary line number
+        lineNumber: newLineNumber,
         totalPrice: total,
       };
       this.selection.select(newItem);

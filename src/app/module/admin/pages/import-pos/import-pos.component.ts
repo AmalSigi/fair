@@ -58,88 +58,98 @@ export class ImportPosComponent {
     const file = event.target.files[0];
     this.errorMessage = null;
     this.selectedFileName = null;
+    this.groupedData = [];
+    this.buttonActive = false;
+
     if (!file) return;
-    // ✅ Validate file type
+
     if (!file.name.endsWith('.xlsx')) {
       this.errorMessage = 'Invalid file type. Only XLSX files are allowed.';
       return;
     }
 
-    // ✅ Simulate upload progress
+    // START PROCESSING
     this.isUploading = true;
-    this.uploadStatus = 'Processing...';
+    this.uploadStatus = 'Reading and converting data...';
+    this.selectedFileName = file.name;
 
-    // Example: Simulate upload complete
-    setTimeout(() => {
-      this.isUploading = false;
-      this.selectedFileName = file.name;
-      this.buttonActive = true;
-    }, 3000);
     const reader = new FileReader();
+
     reader.onload = (e: any) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, {
-        type: 'array',
-        cellDates: true, // This converts the serial numbers to JS Date objects
-        dateNF: 'yyyy-mm-dd',
-      });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const records = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {
+          type: 'array',
+          cellDates: true,
+          dateNF: 'yyyy-mm-dd',
+        });
 
-      if (!this.validateHeaders(records[0])) {
-        this.errorMessage =
-          '❌ Invalid file format. Please use the official Purchase Order Import template.';
-        this.groupedData = [];
-        this.selectedFileName = null;
-        this.buttonActive = false;
-        return;
-      }
-      // Group by PoNumber
-      this.groupedData = Object.values(
-        (records as any[]).reduce((acc: any, row: any) => {
-          const po = this.toText(row['PoNumber']);
-          if (!po) return acc;
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const records = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
 
-          if (!acc[po]) {
-            acc[po] = {
+        if (!this.validateHeaders(records[0])) {
+          this.errorMessage =
+            '❌ Invalid format. Please use the official template.';
+          this.isUploading = false;
+          return;
+        }
+
+        // Perform the Grouping/Conversion
+        this.groupedData = Object.values(
+          (records as any[]).reduce((acc: any, row: any) => {
+            const po = this.toText(row['PoNumber']);
+            if (!po) return acc;
+
+            if (!acc[po]) {
+              acc[po] = {
+                poNumber: po,
+                customerName: this.toText(row['CustomerName']),
+                destination: this.toText(row['Destination']),
+                deliveryTerms: this.toText(row['DeliveryTerms']),
+                paymentTerms: this.toText(row['PaymentTerms']),
+                shippingCharges: this.toNumber(row['ShippingCharges']),
+                discount: this.toNumber(row['Discount']),
+                modeOfShipment: this.toText(row['ModeOfShipment']),
+                deliverySchedule: this.toText(row['DeliverySchedule']),
+                supplier: this.toText(row['Supplier']),
+                orderDate: this.toDateText(row['OrderDate']),
+                totalAmount: this.toNumber(row['TotalAmount']),
+                totalCost: this.toNumber(row['TotalCost']),
+                description: this.toText(row['Description']),
+                items: [],
+              };
+            }
+            const quantity = this.toNumber(row['Quantity']);
+            const unitPrice = this.toNumber(row['UnitPrice']);
+            acc[po].items.push({
+              quantity,
+              unit: this.toText(row['Unit']),
+              description: this.toText(row['ItemDescription']),
+              partNumber: this.toText(row['PartNumber']),
+              manufacturerModel: this.toText(row['ManufacturerModel']),
+              unitPrice,
+              actualCostPerUnit: this.toNumber(row['ActualCostPerUnit']),
+              traceabilityRequired: this.toNumber(row['TraceabilityRequired']),
+              countryOfOrigin: this.toText(row['CountryOfOrigin']),
+              hsc: this.toText(row['HSC']),
+              weightDim: this.toText(row['WeightDim']),
               poNumber: po,
-              customerName: this.toText(row['CustomerName']),
-              destination: this.toText(row['Destination']),
-              deliveryTerms: this.toText(row['DeliveryTerms']),
-              paymentTerms: this.toText(row['PaymentTerms']),
-              shippingCharges: this.toNumber(row['ShippingCharges']),
-              discount: this.toNumber(row['Discount']),
-              modeOfShipment: this.toText(row['ModeOfShipment']),
-              deliverySchedule: this.toText(row['DeliverySchedule']),
-              supplier: this.toText(row['Supplier']),
-              orderDate: this.toDateText(row['OrderDate']),
-              totalAmount: this.toNumber(row['TotalAmount']),
-              totalCost: this.toNumber(row['TotalCost']),
-              description: this.toText(row['Description']),
-              items: [],
-            };
-          }
-          const quantity = this.toNumber(row['Quantity']);
-          const unitPrice = this.toNumber(row['UnitPrice']);
-          acc[po].items.push({
-            quantity,
-            unit: this.toText(row['Unit']),
-            description: this.toText(row['ItemDescription']),
-            partNumber: this.toText(row['PartNumber']),
-            manufacturerModel: this.toText(row['ManufacturerModel']),
-            unitPrice,
-            actualCostPerUnit: this.toNumber(row['ActualCostPerUnit']),
-            traceabilityRequired: this.toNumber(row['TraceabilityRequired']),
-            countryOfOrigin: this.toText(row['CountryOfOrigin']),
-            hsc: this.toText(row['HSC']),
-            weightDim: this.toText(row['WeightDim']),
-            poNumber: po,
-            lineNumber: this.toNumber(row['LineNumber']),
-            totalPrice: this.toNumber(row['TotalPrice'], quantity * unitPrice),
-          });
-          return acc;
-        }, {}),
-      );
+              lineNumber: this.toNumber(row['LineNumber']),
+              totalPrice: this.toNumber(
+                row['TotalPrice'],
+                quantity * unitPrice,
+              ),
+            });
+            return acc;
+          }, {}),
+        );
+        this.isUploading = false;
+        this.buttonActive = true;
+        this.uploadStatus = 'File ready for import';
+      } catch (err) {
+        this.errorMessage = 'Error processing file.';
+        this.isUploading = false;
+      }
     };
 
     reader.readAsArrayBuffer(file);

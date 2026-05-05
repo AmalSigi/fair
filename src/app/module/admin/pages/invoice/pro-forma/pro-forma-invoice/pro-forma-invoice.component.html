@@ -326,6 +326,15 @@
             type="date"
             class="block w-full border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 text-sm"
           />
+          <div
+            *ngIf="
+              proFormaForm.get('estimatedShipDate')?.invalid &&
+              proFormaForm.get('estimatedShipDate')?.touched
+            "
+            class="text-red-500 text-xs mt-1"
+          >
+            Estimated Ship Date is required.
+          </div>
         </div>
 
         <div class="space-y-1">
@@ -537,8 +546,11 @@
               {{ finalInvoiceData.sellerName }}
             </span>
             <span class="font-semibold print:font-normal text-sm px-1">
-              DATE -
               {{ finalInvoiceData.sellerAddress }}
+            </span>
+            <span class="font-semibold print:font-normal text-sm px-1">
+              DATE -
+              {{ finalInvoiceData.date | date: "dd-MMM-yy" }}
             </span>
             <span class="font-semibold text-sm px-1">
               Phone:

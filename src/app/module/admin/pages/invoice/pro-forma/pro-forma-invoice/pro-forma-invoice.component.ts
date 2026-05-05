@@ -37,7 +37,7 @@ export class ProFormaInvoiceComponent implements OnInit {
     currencyCode: new FormControl('USD'),
     totalAmount: new FormControl(0, Validators.min(0)),
     notes: new FormControl(''),
-    estimatedShipDate: new FormControl(''),
+    estimatedShipDate: new FormControl(0, Validators.min(1)),
     status: new FormControl('Pending'),
     createdBy: new FormControl(1),
     createdAt: new FormControl(
@@ -320,9 +320,6 @@ export class ProFormaInvoiceComponent implements OnInit {
       if (this.proFormaForm.valid && areAllItemsValid) {
         this.generateInvoice();
       } else {
-        alert(
-          'Please correct all validation errors (including all line item fields) before proceeding.',
-        );
       }
     } else if (this.currentStep < this.totalSteps) {
       this.currentStep++;
@@ -358,8 +355,10 @@ export class ProFormaInvoiceComponent implements OnInit {
       0,
     );
     const selectedCustomer = this.customers.find(
-      (c: any) => c.organizationId === formValue.customerId,
+      (c: any) => c.organizationId == formValue.customerId,
     );
+    console.log('Selected Customer:', formValue);
+    console.log('Selected Customer:', this.customers);
 
     this.finalProFormaPostData = {
       proformaNumber: formValue.proformaNumber,

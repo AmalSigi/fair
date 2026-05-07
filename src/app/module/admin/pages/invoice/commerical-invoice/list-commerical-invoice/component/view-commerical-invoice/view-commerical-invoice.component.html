@@ -576,37 +576,73 @@
                   <span
                     class="font-semibold print:font-light text-sm print:text-xs px-1"
                   >
-                    NO. BOXES -
-                    {{
-                      finalCommercialInvoiceData?.packingList?.[0]
-                        ?.numberOfBoxes
-                    }}
+                    NO. BOXES
+                    <ng-container
+                      *ngIf="
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.numberOfBoxes !== 0
+                      "
+                    >
+                      -
+                      {{
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.numberOfBoxes
+                      }}
+                    </ng-container>
                   </span>
                   <span
                     class="font-semibold print:font-light text-sm print:text-xs px-1"
                   >
-                    NO OF PALLETS -
-                    {{
-                      finalCommercialInvoiceData?.packingList?.[0]
-                        .numberOfPallets
-                    }}
+                    NO OF PALLETS
+                    <ng-container
+                      *ngIf="
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.numberOfPallets !== 0
+                      "
+                    >
+                      -
+                      {{
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.numberOfPallets
+                      }}
+                    </ng-container>
                   </span>
+
                   <span
                     class="font-semibold print:font-light text-sm print:text-xs px-1"
                   >
-                    GROSS WEIGHT -
-                    {{
-                      finalCommercialInvoiceData?.packingList?.[0].grossWeight
-                    }}
+                    GROSS WEIGHT
+                    <ng-container
+                      *ngIf="
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.grossWeight !== 0
+                      "
+                    >
+                      -
+                      {{
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.grossWeight
+                      }}
+                    </ng-container>
                   </span>
                   <span
                     class="font-semibold print:font-light text-sm print:text-xs px-1"
                   >
                     MARKS & NUMBERS -
-                    {{
-                      finalCommercialInvoiceData?.packingList?.[0]
-                        .marksandNumbers
-                    }}
+                    <ng-container
+                      *ngIf="
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.marksandNumbers &&
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.marksandNumbers !== '0'
+                      "
+                    >
+                      -
+                      {{
+                        finalCommercialInvoiceData?.packingList?.[0]
+                          ?.marksandNumbers
+                      }}
+                    </ng-container>
                   </span>
                   <span
                     class="font-semibold print:font-light text-sm print:text-xs px-1"
@@ -854,6 +890,9 @@
 
                       <td class="p-1 align-top border border-gray-400">
                         {{ item?.hsc }}
+                      </td>
+                      <td class="p-1 align-top border border-gray-400">
+                        {{ item?.weightDim }}
                       </td>
                     </tr>
                   </tbody>

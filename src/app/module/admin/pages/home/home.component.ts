@@ -73,7 +73,7 @@ export class HomeComponent implements AfterViewInit {
     'customerName',
     'orderDate',
     'deliverySchedule',
-    'destination',
+    'country',
     'paymentTerms',
     'deliveryTerms',
     'modeOfShipment',
@@ -90,7 +90,7 @@ export class HomeComponent implements AfterViewInit {
     'customerName',
     'orderDate',
     'deliverySchedule',
-    'destination',
+    'country',
     'paymentTerms',
     'deliveryTerms',
     'modeOfShipment',
@@ -107,7 +107,7 @@ export class HomeComponent implements AfterViewInit {
     'customerName',
     'orderDate',
     'deliverySchedule',
-    'destination',
+    'country',
     'paymentTerms',
     'deliveryTerms',
     'modeOfShipment',
@@ -214,7 +214,7 @@ export class HomeComponent implements AfterViewInit {
       poNumber: this.editingItem.poNumber,
       deliverySchedule: this.editingItem.deliverySchedule,
       orderDate: this.editingItem.orderDate,
-      destination: this.editingItem.destination,
+      country: this.editingItem.country,
       paymentTerms: this.editingItem.paymentTerms,
       deliveryTerms: this.editingItem.deliveryTerms,
       modeOfShipment: this.editingItem.modeOfShipment,
@@ -270,8 +270,8 @@ export class HomeComponent implements AfterViewInit {
             b.supplier || b.vendorOrgName,
             isAsc,
           );
-        case 'destination':
-          return this.compare(a.destination, b.destination, isAsc);
+        case 'country':
+          return this.compare(a.country, b.country, isAsc);
         case 'orderDate':
           return this.compare(a.orderDate, b.orderDate, isAsc);
         case 'deliverySchedule':

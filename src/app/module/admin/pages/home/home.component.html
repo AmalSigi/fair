@@ -141,29 +141,23 @@
               </td>
             </ng-container>
 
-            <ng-container matColumnDef="destination">
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header="destination"
-              >
-                Destination
+            <ng-container matColumnDef="country">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="country">
+                Country
               </th>
               <td mat-cell *matCellDef="let element">
                 <ng-container
                   *ngIf="
                     editingIndex === element._rowIndex && editingTab === 0;
-                    else showDestination
+                    else showCountry
                   "
                 >
                   <input
                     class="w-full px-2 py-1 border rounded"
-                    [(ngModel)]="editingItem.destination"
+                    [(ngModel)]="editingItem.country"
                   />
                 </ng-container>
-                <ng-template #showDestination>{{
-                  element.destination
-                }}</ng-template>
+                <ng-template #showCountry>{{ element.country }}</ng-template>
               </td>
             </ng-container>
 
@@ -515,29 +509,23 @@
                 {{ element.supplier }}
               </td>
             </ng-container>
-            <ng-container matColumnDef="destination">
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header="destination"
-              >
-                Destination
+            <ng-container matColumnDef="country">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="country">
+                Country
               </th>
               <td mat-cell *matCellDef="let element">
                 <ng-container
                   *ngIf="
                     editingIndex === element._rowIndex && editingTab === 1;
-                    else showDestination
+                    else showCountry
                   "
                 >
                   <input
                     class="w-full px-2 py-1 border rounded"
-                    [(ngModel)]="editingItem.destination"
+                    [(ngModel)]="editingItem.country"
                   />
                 </ng-container>
-                <ng-template #showDestination>{{
-                  element.destination
-                }}</ng-template>
+                <ng-template #showCountry>{{ element.country }}</ng-template>
               </td>
             </ng-container>
 
@@ -947,29 +935,23 @@
                 {{ element.supplier }}
               </td>
             </ng-container>
-            <ng-container matColumnDef="destination">
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header="destination"
-              >
-                Destination
+            <ng-container matColumnDef="country">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="country">
+                Country
               </th>
               <td mat-cell *matCellDef="let element">
                 <ng-container
                   *ngIf="
                     editingIndex === element._rowIndex && editingTab === 2;
-                    else showDestination
+                    else showCountry
                   "
                 >
                   <input
                     class="w-full px-2 py-1 border rounded"
-                    [(ngModel)]="editingItem.destination"
+                    [(ngModel)]="editingItem.country"
                   />
                 </ng-container>
-                <ng-template #showDestination>{{
-                  element.destination
-                }}</ng-template>
+                <ng-template #showCountry>{{ element.country }}</ng-template>
               </td>
             </ng-container>
 

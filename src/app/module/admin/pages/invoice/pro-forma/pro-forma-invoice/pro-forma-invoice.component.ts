@@ -357,9 +357,6 @@ export class ProFormaInvoiceComponent implements OnInit {
     const selectedCustomer = this.customers.find(
       (c: any) => c.organizationId == formValue.customerId,
     );
-    console.log('Selected Customer:', formValue);
-    console.log('Selected Customer:', this.customers);
-
     this.finalProFormaPostData = {
       proformaNumber: formValue.proformaNumber,
       purchaseOrderId: formValue.purchaseOrderId,

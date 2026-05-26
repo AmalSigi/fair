@@ -20,6 +20,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PackingListService } from '../../../../../../_core/http/api/packingList.service';
 import { SliService } from '../../../../../../_core/http/api/sli.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-create-commerical-invoice',
@@ -43,6 +44,7 @@ export class CreateCommericalInvoiceComponent implements OnInit {
   public purchaseOrdersList = new MatTableDataSource<any>();
   public sortedData1 = new MatTableDataSource<any>();
   public sortedData2 = new MatTableDataSource<any>();
+
   commercialInvoiceForm: FormGroup = new FormGroup({
     commercialInvoiceNumber: new FormControl(''),
     customerId: new FormControl(null, Validators.required),
@@ -63,8 +65,8 @@ export class CreateCommericalInvoiceComponent implements OnInit {
     createdBy: new FormControl(0),
     selectedPoNumber: new FormControl(null),
     termsOfSale: new FormControl('N/A'),
-    termsOfPayment: new FormControl(''),
-    termsOfShipping: new FormControl(''),
+    termsOfPayment: new FormControl('Advance'),
+    termsOfShipping: new FormControl('FOB/Pickup'),
     modeOfTransport: new FormControl(''),
     finalDestination: new FormControl(''),
     placeOfReceipt: new FormControl(''),
@@ -73,13 +75,13 @@ export class CreateCommericalInvoiceComponent implements OnInit {
     taxId: new FormControl('62-8016608529-3'),
     ein: new FormControl('47-1177753'),
     email: new FormControl('mail@fairmountintl.com'),
-    billOfLading: new FormControl(''),
+    billOfLading: new FormControl('Nill'),
     awbNo: new FormControl(''),
     noOfBoxes: new FormControl(0, Validators.min(0)),
     noOfPallets: new FormControl(0, Validators.min(0)),
     grossWeight: new FormControl(0, Validators.min(0)),
     marksandNumbers: new FormControl('N/A'),
-    email2: new FormControl('fairmountintl@gmail.com'),
+    email2: new FormControl('mail@fairmountintl.com'),
     k11: new FormControl('N/A'),
     freightType: new FormControl(''),
     commercialInvoiceItems: new FormArray([], Validators.required),
@@ -288,7 +290,7 @@ export class CreateCommericalInvoiceComponent implements OnInit {
   get sliItemsArray(): FormArray {
     return this.sliForm.get('items') as FormArray;
   }
-
+  public data: any;
   ngOnInit(): void {
     this.getCommercialInvoicablePO();
     this.getCustomer();
@@ -302,10 +304,25 @@ export class CreateCommericalInvoiceComponent implements OnInit {
           this.onCustomerSelect(customerId);
         }
       });
+    this.commercialInvoiceForm
+      .get('finalDestination')
+      ?.valueChanges.subscribe((value) => {
+        this.commercialInvoiceForm.get('placeOfReceipt')?.setValue(value);
+      });
 
     this.commercialInvoiceItemsArray.valueChanges.subscribe(() => {
       this.calculateGrandTotal();
     });
+    this.commercialInvoiceService.getLastCommercialInvoicedPO().subscribe({
+      next: (result: any) => {
+        this.data = result;
+      },
+    });
+    this.commercialInvoiceForm
+      .get('commercialInvoiceNumber')
+      ?.valueChanges.subscribe((value) => {
+        this.commercialInvoiceForm.get('awbNo')?.setValue(value);
+      });
   }
 
   public getCommercialInvoicablePO() {

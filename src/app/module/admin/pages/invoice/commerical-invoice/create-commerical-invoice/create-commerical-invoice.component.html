@@ -492,6 +492,9 @@
             placeholder="Enter invoice number"
             class="block w-full border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 text-sm"
           />
+          <div class="text-green-500 text-xs mt-1">
+            Recent CI #: {{ data[0]?.commercialInvoiceNumber }}
+          </div>
           <div
             *ngIf="
               commercialInvoiceForm.get('commercialInvoiceNumber')?.invalid &&
@@ -523,29 +526,23 @@
             Date is required.
           </div>
         </div>
+
         <div class="space-y-1">
           <label
             for="finalDestination"
             class="block text-sm font-medium text-gray-700"
             >Final Destination</label
           >
-          <input
+          <select
             id="finalDestination"
             formControlName="finalDestination"
-            type="text"
-            placeholder="Enter final destination"
             class="block w-full border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 text-sm"
-          />
-          <div
-            *ngIf="
-              commercialInvoiceForm.get('finalDestination')?.invalid &&
-              (commercialInvoiceForm.get('finalDestination')?.dirty ||
-                commercialInvoiceForm.get('finalDestination')?.touched)
-            "
-            class="text-red-500 text-xs mt-1"
           >
-            Final Destination is required.
-          </div>
+            <option value="">Select Destination</option>
+            <option value="Kuwait">Kuwait</option>
+            <option value="Qatar">Qatar</option>
+            <option value="Iraq">Iraq</option>
+          </select>
         </div>
 
         <!-- <div class="space-y-1">
@@ -633,7 +630,7 @@
             readonly
           />
         </div>
-        <div class="space-y-1">
+        <!-- <div class="space-y-1">
           <label
             for="modeOfTransport"
             class="block text-sm font-medium text-gray-700"
@@ -656,6 +653,23 @@
           >
             Mode of Transport is required.
           </div>
+        </div> -->
+        <div class="space-y-1">
+          <label
+            for="modeOfTransport"
+            class="block text-sm font-medium text-gray-700"
+            >Mode of Transport</label
+          >
+          <select
+            id="modeOfTransport"
+            formControlName="modeOfTransport"
+            class="block w-full border border-gray-300 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 text-sm"
+          >
+            <option value="">Select Mode of Transport</option>
+            <option value="FedEx">FedEx</option>
+            <option value="DHL">DHL</option>
+            <option value="Fight Forward US">Fight Forward US</option>
+          </select>
         </div>
         <div class="space-y-1">
           <label

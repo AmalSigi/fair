@@ -22,6 +22,9 @@ export class CommercialInvoiceService {
       `${environment.api}/CommercialInvoice?startDate=${startDate}&endDate=${endDate}`,
     );
   }
+  public getLastCommercialInvoicedPO(): Observable<any> {
+    return this.http.get<any>(`${environment.api}/CommercialInvoice?startDate`);
+  }
   public postCommercialInvoice(ciForm: any): Observable<any> {
     return this.http.post<any>(`${environment.api}/CommercialInvoice`, ciForm);
   }

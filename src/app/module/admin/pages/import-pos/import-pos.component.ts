@@ -127,7 +127,7 @@ export class ImportPosComponent {
               quantity,
               unit: this.toText(row['Unit']),
               description: this.toText(row['ItemDescription']),
-              partNumber: this.toText(row['PartNumber']),
+              partNumber: this.toText(row['PartNumber']) || '0',
               manufacturerModel: this.toText(row['ManufacturerModel']),
               unitPrice,
               actualCostPerUnit: this.toNumber(row['ActualCostPerUnit']),
@@ -166,8 +166,6 @@ export class ImportPosComponent {
     const fileHeaders = Object.keys(firstRow)
       .map((header) => header.trim())
       .filter((header) => header && !header.startsWith('__EMPTY'));
-
-    console.log('Validating headers:', fileHeaders);
 
     return this.requiredHeaders.every((header) => fileHeaders.includes(header));
   }
